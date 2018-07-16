@@ -16,8 +16,8 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="">待办事项</a></li>
-                <li><a href="">添加事项</a></li>
+                <li class="active"><a href="">商家资料</a></li>
+                <li><a href="">菜品详情</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{ url_for('cms.注册') }}">注册</a></li>
@@ -38,12 +38,18 @@
             <label for="item_name" class="col-sm-2 control-label">姓名</label>
             <div class="col-sm-10">
                 <input name="username" type="text" class="form-control" id="item_name" placeholder="输入姓名">
+                {% if user_form %}
+                {{ user_form.errors.username }}
+                {% endif %}
             </div>
         </div>
          <div class="form-group">
             <label for="item_cnt" class="col-sm-2 control-label">密码</label>
             <div class="col-sm-10">
-                <input name="password" type="password" id="item_cnt" class="form-control" placeholder="请输入密码">
+                <input name="password1" type="password" id="item_cnt" class="form-control" placeholder="请输入密码">
+                {% if user_form %}
+                 {{ user_form.errors.password1 }}
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
