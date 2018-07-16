@@ -1,5 +1,5 @@
 from apps.models.base import db
-
+from werkzeug.security import generate_password_hash
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,7 +16,8 @@ class User(db.Model):
     # 写函数
     @password.setter
     def password(self, arg):
-        self._password = arg
+        # 密码加密
+        self._password = generate_password_hash(arg)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
