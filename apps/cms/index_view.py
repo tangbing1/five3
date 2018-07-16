@@ -30,9 +30,14 @@ def i_res():
             user._password = user_form.password1.data
             user.sex = request.form.get('sex')
             user.city = request.form.get('city')
+            # 性别和城市可以不用填,所以不用再form表单里验证,直接获取,
             db.session.add(user)
             db.session.commit()
 
+
             return redirect(url_for('cms.登录'))
 
-    return render_template('cms/res.html')
+        return render_template('cms/res.html', user_form=user_form)
+    else:
+
+        return render_template('cms/res.html')
