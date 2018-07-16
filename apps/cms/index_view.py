@@ -29,7 +29,9 @@ def i_login():
                # 利用session来记录登录状态
                return redirect(url_for('cms.主页'))
         return render_template('cms/login.html', user_form=user_form)
-    return render_template('cms/login.html')
+    else:
+        user_form = SellerLoginForm(request.form)
+    return render_template('cms/login.html', user_form=user_form)
 
 
 
@@ -37,7 +39,9 @@ def i_login():
 @cms_bp.route('/res/', methods=['GET', 'POST'], endpoint='注册')
 def i_res():
     if request.method == 'POST':
+        # 利用用户输入的数据,实例化表单验证器,使用用户的post提交的数据
         user_form = SellerResForm(request.form)
+        # 利用验证器模块的校验方式,检验数据
         if user_form.validate():
             user = User()
             user.username = user_form.username.data
@@ -48,13 +52,16 @@ def i_res():
             db.session.add(user)
             db.session.commit()
 
-
-            return redirect(url_for('cms.登录'))
-
+            session.permanent = True
+            session['username'] = request.form['username']
+            flash('You were logged in')
+            # 利用session来记录登录状态
+            return redirect(url_for('cms.主页'))
+        # 错误都保存在user_form的errors里,可以debug模式查看
         return render_template('cms/res.html', user_form=user_form)
     else:
-
-        return render_template('cms/res.html')
+        user_form = SellerResForm(request.form)
+        return render_template('cms/res.html',user_form=user_form)
 
 @cms_bp.route('/logout/',endpoint='注销')
 def i_logout():
