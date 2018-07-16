@@ -1,0 +1,93 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}注册{% endblock %}
+{% block navbar %}
+<nav class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('cms.主页') }}">主页</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="">待办事项</a></li>
+                <li><a href="">添加事项</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{ url_for('cms.注册') }}">注册</a></li>
+                <li><a href="{{ url_for('cms.登录') }}">登录</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="col-xs-6 col-xs-offset-3">
+    <div class="page-header">
+        <h3 class="text-center">注册</h3>
+    </div>
+
+    <form class="form-horizontal" action="" method="post">
+        <div class="form-group">
+            <label for="item_name" class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-10">
+                <input name="username" type="text" class="form-control" id="item_name" placeholder="输入姓名">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="item_name" class="col-sm-2 control-label">性别</label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                  <input type="radio" name="sex" id="inlineRadio1" value="男"> 男
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="sex" id="inlineRadio2" value="女"> 女
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="sex" id="inlineRadio3" value="保密"> 保密
+                </label>
+            </div>
+        </div>
+         <div class="form-group">
+            <label for="item_name" class="col-sm-2 control-label">城市</label>
+            <div class="col-sm-10">
+                <select class="form-control" name="city">
+                      <option>成都</option>
+                      <option>德阳</option>
+                      <option>绵阳</option>
+                      <option>内江</option>
+                      <option>自贡</option>
+                </select>
+            </div>
+        </div>
+
+         <div class="form-group">
+            <label for="item_cnt" class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-10">
+                <input name="password" type="password" id="item_cnt" class="form-control" placeholder="请输入密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="item_cnt" class="col-sm-2 control-label">确认密码</label>
+            <div class="col-sm-10">
+                <input name="password1" type="password" id="item_cnt" class="form-control" placeholder="请再次输入密码">
+            </div>
+        </div>
+
+        <div class="page-header">
+        <p class="text-center"> <button type="submit" class="btn btn-primary">立即注册</button></p>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src="my-script.js"></script>
+{% endblock %}
