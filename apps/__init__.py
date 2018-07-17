@@ -17,6 +17,7 @@ def register_db(app):
     db.init_app(app)
 
     return None
+
 # 登录插件的注册
 def register_bs(app):
 

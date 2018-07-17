@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import login_user,logout_user
+from flask_login import login_user, logout_user, current_user
 from apps.cms import cms_bp
 # from apps.models.user import User
 from apps.models.base import db
@@ -11,14 +11,9 @@ from apps.seller_forms.seller_forms import SellerResForm, SellerLoginForm
 @cms_bp.route('/index/',endpoint='主页')
 def index():
     # print(session['username'])
-
-    if session:
-
-        return render_template('cms/index.html',name=session)
+    if current_user.is_authenticated:
+        return render_template('cms/index.html')
     return render_template('cms/index.html')
-
-
-# 现在做到模板渲染里用{% if current_user.is_authenticated() %}
 
 
 
@@ -37,8 +32,8 @@ def i_login():
                 # session.permanent = True
                 # session['username'] = request.form['username']
                 # flash('You were logged in')
-                # 利用session来记录登录状态
-
+                """利用session来记录登录状态"""
+                """利用login插件来做登录"""
                 login_user(user)
                 return redirect(url_for('cms.主页'))
 
@@ -70,11 +65,13 @@ def i_res():
             # 性别和城市可以不用填,所以不用在form表单里验证,直接获取,
             db.session.add(user)
             db.session.commit()
-
-            session.permanent = True
-            session['username'] = request.form['username']
-            flash('You were logged in')
+            """利用session做登录"""
+            # session.permanent = True
+            # session['username'] = request.form['username']
+            # flash('You were logged in')
             # 利用session来记录登录状态
+            """利用flask_login做登录"""
+            login_user(user)
             return redirect(url_for('cms.主页'))
         # 错误都保存在user_form的errors里,可以debug模式查看
         return render_template('cms/res.html', user_form=user_form)
@@ -84,7 +81,8 @@ def i_res():
 # 注销功能
 @cms_bp.route('/logout/',endpoint='注销')
 def i_logout():
-    session.permanent = False
-    session['username'] = ''
+    # session.permanent = False
+    # session['username'] = ''
     # 或者字典删除方式 session.clear()
+    logout_user()
     return redirect(url_for('cms.主页'))
