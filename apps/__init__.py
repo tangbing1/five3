@@ -3,6 +3,7 @@ from flask_bootstrap import Bootstrap
 
 
 # 注册各个蓝图对象
+
 def register_bp(app):
     from apps.cms import cms_bp
     app.register_blueprint(cms_bp)      # 商家后台的蓝图注册
@@ -16,7 +17,12 @@ def register_db(app):
     db.init_app(app)
 
     return None
+# 登录插件的注册
+def register_bs(app):
 
+    from apps.seller_forms.login_man import login_manager
+    login_manager.init_app(app)
+    return None
 
 # 产生主app对象
 def create_app():
@@ -31,6 +37,11 @@ def create_app():
 
     # Bootstrap对象的注册
     Bootstrap(app)
+
+
+    # 注册login_manager对象
+    register_bs(app)
+
 
     # 注册各个蓝图
     register_bp(app)

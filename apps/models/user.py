@@ -1,8 +1,9 @@
+from flask_login.mixins import UserMixin
 from apps.models.base import db
 from werkzeug.security import generate_password_hash
 # 密码加密
 
-class User(db.Model):
+class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(32), unique=True, nullable=False)
     sex = db.Column(db.String(3), nullable=True)

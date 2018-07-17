@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash,check_password_hash
-
+from flask_login import login_user,logout_user
 from apps.cms import cms_bp
 # from apps.models.user import User
 from apps.models.base import db
@@ -11,10 +11,16 @@ from apps.seller_forms.seller_forms import SellerResForm, SellerLoginForm
 @cms_bp.route('/index/',endpoint='主页')
 def index():
     # print(session['username'])
+
     if session:
 
         return render_template('cms/index.html',name=session)
     return render_template('cms/index.html')
+
+
+# 现在做到模板渲染里用{% if current_user.is_authenticated() %}
+
+
 
 # 登录功能
 @cms_bp.route('/login/',methods=['GET','POST'],endpoint='登录')
@@ -28,10 +34,12 @@ def i_login():
                 return redirect(url_for('cms.登录'))
             elif user != None and check_password_hash(user.password, user_form.password1.data):
                 # password和_password要区别,数据库里没有_password
-                session.permanent = True
-                session['username'] = request.form['username']
-                flash('You were logged in')
+                # session.permanent = True
+                # session['username'] = request.form['username']
+                # flash('You were logged in')
                 # 利用session来记录登录状态
+
+                login_user(user)
                 return redirect(url_for('cms.主页'))
 
             else:
@@ -73,9 +81,10 @@ def i_res():
     else:
         user_form = SellerResForm(request.form)
         return render_template('cms/res.html',user_form=user_form)
-
+# 注销功能
 @cms_bp.route('/logout/',endpoint='注销')
 def i_logout():
     session.permanent = False
     session['username'] = ''
+    # 或者字典删除方式 session.clear()
     return redirect(url_for('cms.主页'))
