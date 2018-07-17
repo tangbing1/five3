@@ -36,7 +36,8 @@ def i_login():
 
             else:
                 flash('密码错误')
-                return redirect(url_for('cms.登录'))
+                user_form.password1.errors = ['用户名或者密码错误']
+                return render_template('cms/login.html', user_form=user_form)
         else:
             return render_template('cms/login.html', user_form=user_form)
     else:

@@ -1,5 +1,5 @@
 {% extends "bootstrap/base.html" %}
-{% block title %}主页{% endblock %}
+{% block title %}商家后台{% endblock %}
 {% block navbar %}
 <nav class="navbar navbar-inverse">
     <div class="container">
@@ -26,7 +26,7 @@
                     <li><a href="{{ url_for('cms.注销') }}">注销</a></li>
                 {% else %}
                     <li><a href="{{ url_for('cms.注册') }}">注册</a></li>
-                    <li><a href="{{ url_for('cms.登录') }}">登录</a></li>
+                    <li><a href="{{ url_for('cms.登录') }}">请登录</a></li>
                 {% endif %}
 
             </ul>
