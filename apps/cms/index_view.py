@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash,check_password_hash
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user,login_required
 from apps.cms import cms_bp
 # from apps.models.user import User
 from apps.models.base import db
@@ -35,7 +35,14 @@ def i_login():
                 """利用session来记录登录状态"""
                 """利用login插件来做登录"""
                 login_user(user)
-                return redirect(url_for('cms.主页'))
+                # 判断是否传递了next的参数
+                next_page = request.args.get('next')
+                print(next_page)
+                if not next_page or not next_page.startswith('/'):
+                    # 判断next_page.startswith('/')为了防止黑客攻击比如
+                    # http://127.0.0.1:5000/login/?next=www.baidu.com
+                    next_page = url_for('cms.主页')
+                return redirect(next_page)
 
             else:
                 flash('密码错误')
@@ -86,3 +93,10 @@ def i_logout():
     # 或者字典删除方式 session.clear()
     logout_user()
     return redirect(url_for('cms.主页'))
+    # return redirect('/index/')
+
+
+@cms_bp.route('/shop/',endpoint='商家资料')
+@login_required
+def seller_shop():
+    return '商家资料'

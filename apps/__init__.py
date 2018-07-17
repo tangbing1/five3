@@ -23,6 +23,9 @@ def register_bs(app):
 
     from apps.seller_forms.login_man import login_manager
     login_manager.init_app(app)
+
+    login_manager.login_view = "cms.登录"
+    # 定制没有登录情况下自动跳转的页面
     return None
 
 # 产生主app对象
