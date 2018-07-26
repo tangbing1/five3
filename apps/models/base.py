@@ -13,6 +13,6 @@ db = SQLAlchemy()
 #             if hasattr(self, k) and k != "id":
 #                 setattr(self, k, v)
 # 暂时先从基础来实现
-from .user import User
+from .user import User,SellerShop,MenuCategory,Consumer
 
 

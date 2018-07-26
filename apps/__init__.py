@@ -51,3 +51,21 @@ def create_app():
     register_bp(app)
 
     return app
+
+
+# 注册api蓝图
+def res_api(app):
+    from apps.apis import api_bp
+    app.register_blueprint(api_bp)
+#     注册子蓝图
+
+# 产生客户端的app
+def create_api_app():
+    app = Flask(__name__, static_url_path='/c', static_folder='./client_web')
+    # 数据库配置
+    app.config.from_object('apps.private_config')
+    # 注册数据库
+    register_db(app)
+    # 注册蓝图
+    res_api(app)
+    return app

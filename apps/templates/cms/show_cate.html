@@ -36,56 +36,37 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <h1 class="text-center">吃了吗商家管理系统</h1>
+        <h1 class="text-center">{{ shop.shop_name }}食品分类</h1>
         <hr>
-         {% if current_user.is_authenticated %}
+
               <div class="panel panel-default">
                         <div class="panel-heading">
-                            <strong class="text-danger">{{ current_user.username }}</strong> 的店铺：
+                            <strong class="text-danger">{{ shop.shop_name }}</strong>的分类：
                         </div>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>序号</th>
-                                    <th>店铺名称</th>
-                                    <th>店铺评分</th>
-                                    <th>起送价格</th>
-                                    <th>配送费</th>
-                                    <th>菜品分类</th>
+                                    <th>分类名称</th>
                                     <th>菜品信息</th>
+                                    <th>平均价格</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for info in shop_info %}
+                            {% for i in cate %}
                                 <tr>
-
                                     <td>{{ loop.index }}</td>
-                                    <td><a href="{{ url_for('cms.更新店铺',sid=info[4]) }}">{{ info[0] }}</a></td>
-                                    <td>{{ info[3] }}</td>
-                                    <td>￥{{ info[1] }}</td>
-                                    <td>￥{{ info[2] }}</td>
-                                    <td>
-                                        <a href="{{ url_for('cms.添加分类',sid=info[4]) }}">添加</a>
-                                        &nbsp;&nbsp;
-                                        <a href="{{ url_for('cms.显示分类',sid=info[4]) }}">查看</a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ url_for('cms.添加菜品',sid=info[4]) }}">添加</a>
-                                        &nbsp;&nbsp;
-                                        <a href="{{ url_for('cms.显示菜品',sid=info[4]) }}">查看</a>
-                                    </td>
+                                    <td><a href="{{ url_for('cms.更新分类',sid=shop.id,cid=i.id) }}">{{ i. name }}</a> </td>
+                                    <td> <a href="{{ url_for('cms.添加菜品',sid=shop.id) }}">添加</a>
 
+                                        &nbsp;&nbsp;{{ i.count }}</td>
+
+                                    <td>￥{{ i.total }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
               </div>
-    </div>         
- {% else %}
-    您还没有登录,请先登录或注册
- {% endif %}
-{% endblock %}
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript" src="my-script.js"></script>
+    </div>
+
 {% endblock %}

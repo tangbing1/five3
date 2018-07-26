@@ -1,6 +1,6 @@
 DEBUG = True
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///G:\db\clm.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///G:\db\clmm.db'
 
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 

@@ -16,7 +16,7 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-
+                
                 <li><a href="{{ url_for('cms.添加店铺') }}">我要开店</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -36,56 +36,49 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <h1 class="text-center">吃了吗商家管理系统</h1>
+        <h1 class="text-center">菜品明细</h1>
         <hr>
-         {% if current_user.is_authenticated %}
+
               <div class="panel panel-default">
                         <div class="panel-heading">
-                            <strong class="text-danger">{{ current_user.username }}</strong> 的店铺：
+                            <strong class="text-danger">{{ shop.shop_name }}</strong>的菜品清单：
                         </div>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>序号</th>
-                                    <th>店铺名称</th>
-                                    <th>店铺评分</th>
-                                    <th>起送价格</th>
-                                    <th>配送费</th>
-                                    <th>菜品分类</th>
-                                    <th>菜品信息</th>
+                                    <th>菜品名称</th>
+                                    <th>菜品价钱</th>
+                                    <th>菜品销量</th>
+                                    <th>菜品评分</th>
+                                    <th>菜品操作</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for info in shop_info %}
-                                <tr>
-
-                                    <td>{{ loop.index }}</td>
-                                    <td><a href="{{ url_for('cms.更新店铺',sid=info[4]) }}">{{ info[0] }}</a></td>
-                                    <td>{{ info[3] }}</td>
-                                    <td>￥{{ info[1] }}</td>
-                                    <td>￥{{ info[2] }}</td>
-                                    <td>
-                                        <a href="{{ url_for('cms.添加分类',sid=info[4]) }}">添加</a>
-                                        &nbsp;&nbsp;
-                                        <a href="{{ url_for('cms.显示分类',sid=info[4]) }}">查看</a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ url_for('cms.添加菜品',sid=info[4]) }}">添加</a>
-                                        &nbsp;&nbsp;
-                                        <a href="{{ url_for('cms.显示菜品',sid=info[4]) }}">查看</a>
-                                    </td>
-
-                                </tr>
+                            <tr class="well well-sm">
+                                {% for item in cate %}
+                                <th><span style="color:#d29091;">{{ item.name }}</span></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                            {% for i in item.foods %}
+                                <td>{{ loop.index }}</td>
+                                <td>{{ i.food_name }}</td>
+                                <td>￥{{ i.food_price }}</td>
+                                <td>{{ i.month_sales }} </td>
+                                <td>{{ i.rating }}</td>
+                                <td><a href="{{ url_for('cms.更新菜品',sid=shop.id,cid=item.id,fid=i.id) }}">编辑</a></td>
+                            </tr>
+                             {% endfor %}
                             {% endfor %}
+
                             </tbody>
                         </table>
               </div>
-    </div>         
- {% else %}
-    您还没有登录,请先登录或注册
- {% endif %}
-{% endblock %}
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript" src="my-script.js"></script>
+    </div>
+
 {% endblock %}
