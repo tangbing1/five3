@@ -6,3 +6,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 # 如果使用session,就必须配置秘钥
 SECRET_KEY = 'hard to guess string'
+
+EXPIRES_TIME = 30 * 24 * 3600
