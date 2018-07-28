@@ -130,7 +130,7 @@ class MenuDishes(db.Model):
             return getattr(self, item)
     def __repr__(self):
         return "Food: {}-{}".format(self.food_name, self.food_price)
-
+##########################################################################################
 # 用户的注册信息表
 class Consumer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -155,3 +155,28 @@ class Consumer(db.Model):
 
     def __repr__(self):
         return '<Consumer {}>'.format(self.username)
+
+#收货地址
+class BuyerAddressModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('consumer.id'))
+    user = db.relationship("Consumer", backref="addresses")
+    # 省
+    provence = db.Column(db.String(8))
+    # 市
+    city = db.Column(db.String(16))
+    # 县
+    area = db.Column(db.String(16))
+    # 详细地址
+    detail_address = db.Column(db.String(64))
+    # 收货人姓名
+    name = db.Column(db.String(32))
+    # 收货人电话
+    tel = db.Column(db.String(16))
+
+    def keys(self):
+        return "provence", "city", "area", "detail_address", "name", "tel"
+
+    def __getitem__(self, item):
+        if hasattr(self, item):
+            return getattr(self, item)

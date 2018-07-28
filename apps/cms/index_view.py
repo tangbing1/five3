@@ -222,6 +222,7 @@ def update_shop(sid):
 
     if request.method == 'GET':
         form = ShopForm(data=dict(shop))
+        # print(form)
         # print(form.is_brand.data)
         # data这里是Form表单内源码里定义的,可以接收一个字典
         return render_template('cms/update_shop.html', form=form)
