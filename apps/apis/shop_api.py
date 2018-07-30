@@ -1,5 +1,6 @@
 import random
 
+import datetime,time
 from flask import jsonify, request, current_app, g
 from werkzeug.security import check_password_hash
 
@@ -8,7 +9,8 @@ from apps.apis.shop_view import shops, shop_view
 from apps.lib.codes import r
 from apps.lib.token_code import token_require
 from apps.models.base import db
-from apps.models.user import SellerShop, Consumer, BuyerAddressModel
+from apps.models.user import SellerShop, Consumer, BuyerAddressModel, CartModel, OrderInfoModel, MenuDishes, \
+    OrderGoodsModel
 # from apps.seller_forms.seller_forms import ConsumerResForm
 from apps.seller_forms.seller_forms import ConsumerResForm, ConsumerLoginForm, BuyerAddressForm
 from itsdangerous import TimedJSONWebSignatureSerializer as seri
@@ -189,7 +191,137 @@ def changePassword():
     pass
 
 #######################################################################################
+# 添加购物车
+"""订单这一块,用了三个表,需要好好理理"""
 @api_bp.route('/cart/',methods=['POST'])
 @token_require
 def add_cart():
-    pass
+    goodslist = request.form.getlist('goodsList[]')
+    # 获取商品的id
+    count = request.form.getlist('goodsCount[]')
+
+    # zip内置函数,解包
+    for x,y in zip(goodslist,count):
+        cart = CartModel()
+        # print(x,y)
+        cart.user_id = g.current_user.id
+        cart.foods_id = x
+        cart.food_num = y
+        db.session.add(cart)
+        db.session.commit()
+
+    return jsonify({"status": "true", "message": "添加成功"})
+
+# 获取购物车
+@api_bp.route('/cart/',methods=['GET'])
+@token_require
+def get_cart():
+    cart = CartModel.query.filter(CartModel.user_id == g.current_user.id)
+    res = []
+    total = 0
+    # 订单商品产生
+    for i in cart:
+        food = MenuDishes.query.get(i.foods_id)
+
+        info = {
+            "goods_id": food.id,
+            "goods_name": food.food_name,
+            "goods_img": "http://www.homework.com/images/slider-pic2.jpeg",
+            "amount": i.food_num,
+            "goods_price": float(food.food_price)
+        }
+        total += i.food_num * float(food.food_price)
+        res.append(info)
+
+
+    return jsonify(
+        {"goods_list": res,"totalCost": total})
+#添加订单接口
+@api_bp.route('/order/',methods=['POST'])
+@token_require
+def create_order():
+
+    carts = CartModel.query.filter(CartModel.user_id == g.current_user.id)
+    aid = request.form.get('address_id')
+
+    address = BuyerAddressModel.query.get(aid)
+    # 前端返回了一个address_id,用户的地址信息
+
+    total = 0
+    order = OrderInfoModel()
+    for i in carts:
+        food = MenuDishes.query.get(i.foods_id)
+
+        # 订单信息产生
+        order.user_id = g.current_user.id
+        order.shop_id = food.shop_id
+        order.order_code = str(time.strftime('%Y%m%d%H%M%S')) + str(g.current_user.id) + str(random.randint(10, 99))
+        order.created_time = datetime.datetime.now()
+
+        total += i.food_num * float(food.food_price)
+        order.order_price = total
+    order.order_address = address. provence + address.city + address.area + address.detail_address
+    db.session.add(order)
+    db.session.commit()
+    for i in carts:
+        # 订单中商品信息产生,购物车中每一个商品信息都应该写到数据库
+        food = MenuDishes.query.get(i.foods_id)
+        goods = OrderGoodsModel()
+
+        goods.goods_id = food.id
+        goods.goods_name = food.food_name
+        goods.goods_price = food.food_price
+        cart = CartModel.query.filter(CartModel.foods_id == food.id).first()
+        goods.amount = cart.food_num
+
+
+        goods.order_id = order.id
+
+        db.session.add(goods)
+        db.session.commit()
+
+    for i in carts:
+        # 订单一提交,清空购物车
+        db.session.delete(i)
+        db.session.commit()
+    return jsonify({
+      "status": "true",
+      "message": "添加成功",
+      "order_id": order.id
+    })
+#显示订单信息
+@api_bp.route('/order/',methods=['GET'])
+@token_require
+def get_order():
+    id = request.args.get('id')
+    print(id)
+    order = OrderInfoModel.query.get(id)
+    shop = SellerShop.query.filter(SellerShop.id == order.shop_id).first()
+    goods = OrderGoodsModel.query.filter(OrderGoodsModel.order_id == order.id)
+
+    res = []
+    for good in goods:
+
+        dic = {"id": str(good.id),
+        "goods_name": good.goods_name,
+        "goods_img" : "http://www.homework.com/images/slider-pic2.jpeg",
+        "amount" : good.amount,
+        "goods_price" : good.goods_price}
+        res.append(dic)
+    print(res)
+    result = {
+
+            "id": str(id),
+            "order_code": order.order_code,
+            "order_birth_time": order.created_time,
+            "order_status": order.order_status,
+            "shop_id": str(order.shop_id),
+            "shop_name": shop.shop_name,
+            "shop_img": "http://www.homework.com/images/shop-logo.png",
+            "goods_list": res,
+            "order_price": order.order_price,
+            "order_address": order.order_address
+    }
+    return jsonify(result)
+#######################################################################
+# 订单支付

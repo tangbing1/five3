@@ -180,3 +180,53 @@ class BuyerAddressModel(db.Model):
     def __getitem__(self, item):
         if hasattr(self, item):
             return getattr(self, item)
+
+
+# 购物车订单信息
+# 购物车模型，每个用户都有订单，按照每个订单去订单表里进行数据处理
+class CartModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('consumer.id'))
+    # 菜品id
+    foods_id = db.Column(db.Integer, db.ForeignKey('menu_dishes.id'))
+    # 菜品数量
+    food_num = db.Column(db.Integer)
+
+    user = db.relationship('Consumer', backref='carts')
+
+
+# 订单详情
+class OrderInfoModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_code = db.Column(db.String(32), unique=True)
+    shop_id = db.Column(db.Integer, db.ForeignKey('seller_shop.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('consumer.id'))
+    # 订单送货地址
+    order_address = db.Column(db.String(128))
+    # 订单价钱
+    order_price = db.Column(db.Float)
+    # 订单状态
+    order_status = db.Column(db.Integer,default='代付款')
+    # 订单产生时间
+    created_time = db.Column(db.DateTime, onupdate=True)
+    # 第三方交易号
+    trade_sn = db.Column(db.String(128))
+
+
+# 订单的商品
+class OrderGoodsModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order_info_model.id'))
+    # 商品ID号
+    goods_id = db.Column(db.Integer)
+    # 商品名称
+    goods_name = db.Column(db.String(64))
+    # 商品图片
+    goods_image = db.Column(db.String(128), default='')
+    # 商品价钱
+    goods_price = db.Column(db.Float)
+    # 商品数量
+    amount = db.Column(db.Integer)
+
+    order = db.relationship('OrderInfoModel', backref='order_goods')
+
